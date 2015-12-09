@@ -51,12 +51,8 @@ public class AccesoLocal extends UnicastRemoteObject implements Sitio5Int {
 
     @Override
     public boolean delete(String tabla, Map<String, ?> attrWhere) throws RemoteException {
-        Boolean ok = true;
-        BaseDAO dao = new BaseDAO();
         
-        if (!dao.delete(tabla, attrWhere)) {
-            ok = false;
-        }
+        boolean ok = new BaseDAO().delete(tabla, attrWhere);
         
         System.out.println("Se eliminó de la tabla: " + tabla + " resultado: " + ok);
         

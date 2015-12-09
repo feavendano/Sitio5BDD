@@ -325,7 +325,7 @@ public class TransactionManager {
         System.out.println("fin de rollback global");
     }
 
-    public static boolean deleteDireccionReplicado(String tabla, Map<String, ?> attrWhere) {
+    public static boolean deleteReplicado(String tabla, Map<String, ?> attrWhere) {
         boolean ok = true;
 
         System.out.println("---------Start Global transaction----------");

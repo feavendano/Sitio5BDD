@@ -65,7 +65,7 @@ public class PersistenciaImpl extends UnicastRemoteObject implements Persistenci
         } else if (tabla.equalsIgnoreCase("implementacion_evento_empleado")) {
             //ok = false;
         } else {
-            ok = TransactionManager.deleteDireccionReplicado(tabla, attrWhere);
+            ok = TransactionManager.deleteReplicado(tabla, attrWhere);
         }
         
         return ok;

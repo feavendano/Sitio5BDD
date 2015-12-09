@@ -163,7 +163,7 @@ public class QueryManager {
 //        uniInsert(savePKs, Interfaces.LOCALHOST, tablas, datos);
 //        System.out.println("savePKs: " + savePKs + " Id: " + datos.getValueAt(0, 0));
         //Obtener todas las interfaces de sitio
-        for (Interfaces interfaceSitio : Interfaces.values()) {
+        for (Interfaces interfaceSitio : InterfaceManager.getInterfacesRegistradas()) {
 
             if (interfaceSitio.equals(Interfaces.LOCALHOST)) {
                 continue;
@@ -178,7 +178,7 @@ public class QueryManager {
 //                    System.out.println("Thread de inserción a la interface: " + 
 //                            interfaceSitio + ", resultadoTodos = " + transactionOk);
 
-                    short resultadoActual = uniDelete(false, interfaceSitio, tabla, attrWhere)
+                    short resultadoActual = uniDelete(interfaceSitio, tabla, attrWhere)
                             != null ? (short) 1 : (short) 0;
 
 //                    System.out.println("Thread de inserción a la interface: " + 
@@ -221,7 +221,7 @@ public class QueryManager {
         return (ok == true) ? ok : null;
     }
 
-    private static Object uniDelete(boolean b, Interfaces interfaceSitio, String tabla, Map<String, ?> attrWhere) {
+    private static Object uniDelete(Interfaces interfaceSitio, String tabla, Map<String, ?> attrWhere) {
         Boolean ok = null;
         try {
             //obtener la interface
