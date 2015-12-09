@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -467,18 +468,44 @@ public class DataTable extends AbstractTableModel {
 
         return dts;
     }
-
+    
+    public DataTable removerColumnas(String[] columnasRemover) {
+        //Columnas actuales
+        List<String> columnasActuales = new ArrayList<>(Arrays.asList(columns));
+        
+        for (int i = 0; i < columnasActuales.size(); i++) {
+            String columnaActual = columnasActuales.get(i);
+            
+            for (String columnaRemover : columnasRemover) {
+                if (columnaActual.equalsIgnoreCase(columnaRemover)) {
+                    columnasActuales.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+        
+        String[] columnasNuevas = new String[columnasActuales.size()];
+        
+        columnasNuevas = columnasActuales.toArray(columnasNuevas);
+        
+        DataTable[] frags = fragmentarVertical(columnasRemover, columnasNuevas);
+        
+        
+        return frags[1];
+    }
+    
     @Override
     public String toString() {
-        String string = null;
+        String string = "";
         
         rewind();
         while (next()) {
             for (int i = 0; i < getColumnCount(); i++) {
-                System.out.print(getColumnName(i) + "---> "
-                        + getObject(getColumnName(i)) + " || ");
+                string += getColumnName(i) + "---> "
+                        + getObject(getColumnName(i)) + " || ";
             }
-            System.out.println("");
+            string += "\n";
         }
         
         rewind();
