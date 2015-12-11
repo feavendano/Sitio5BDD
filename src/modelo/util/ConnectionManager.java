@@ -22,8 +22,8 @@ public class ConnectionManager {
     private static final ThreadLocal<Connection> conexion = new ThreadLocal<>();
     private static final String user = "root";
     private static final String pass = "";
-    private static final String url = "jdbc:postgresql://localhost:5432/capacisoftfrag";
-    private static final String driver = "org.postgresql.Driver";
+    private static final String url = "jdbc:mysql://localhost:3306/capacisoftfrag";
+    private static final String driver = "com.mysql.jdbc.Driver";
 
     public static Connection conectar() {
         Connection con = conexion.get();

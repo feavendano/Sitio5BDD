@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -105,7 +104,7 @@ public class BaseDAO {
             }
 
             System.out.println("Id 1: " + data.getValueAt(0, 0));
-            
+
             //ConnectionManager.commit();
         } catch (SQLException ex) {
             ConnectionManager.rollback();
@@ -173,11 +172,11 @@ public class BaseDAO {
             conexion = ConnectionManager.conectar();
 
             ps = conexion.prepareStatement(updateQuery);
-            
+
             //Cargar datos...
             //Reiniciar por si las dudas
             data.rewind();
-            
+
             data.next();
 
             //SET
@@ -219,8 +218,8 @@ public class BaseDAO {
         String deleteQuery = "DELETE FROM " + tableName;
 
         try {
-        //Crear query
-        //WHERE clauses...
+            //Crear query
+            //WHERE clauses...
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 deleteQuery += " WHERE ";
                 List<String> attrs = new ArrayList<>(attrWhere.keySet());
@@ -250,7 +249,7 @@ public class BaseDAO {
                 deleteQuery += "?";
             }
 
-        System.out.println(deleteQuery);
+            System.out.println(deleteQuery);
 
             conexion = ConnectionManager.conectar();
 
@@ -259,7 +258,7 @@ public class BaseDAO {
             //WHERE
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 int paramNumber = 0;
-                
+
                 for (String key : attrWhere.keySet()) {
                     ps.setObject(paramNumber + 1, attrWhere.get(key));
                     paramNumber++;
@@ -281,9 +280,9 @@ public class BaseDAO {
         }
         return ok;
     }
-    
+
     public DataTable get(String tableName, String[] projectColumns,
-            String[] projectAliases, Map<String, ?> attrWhere) {
+            String[] projectAliases, Map<String, ?> attrWhere, String orderColumn) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Connection conexion;
@@ -291,64 +290,109 @@ public class BaseDAO {
         String selectQuery = "SELECT ";
 
         try {
-        //Crear query
-        //Project columns...
-        if (projectColumns != null && projectColumns.length > 0 &&
-                projectAliases != null && projectAliases.length == projectColumns.length) {
-            
-            for (int i = 0; i < projectColumns.length - 1; i++) {
-                selectQuery += projectColumns[i];
-                
-                if (projectAliases[i] != null && !projectAliases[i].isEmpty()) {
-                    selectQuery += " AS " + projectAliases[i];
+            //Crear query
+            //Project columns...
+            if (projectColumns != null && projectColumns.length > 0
+                    && projectAliases != null && projectAliases.length == projectColumns.length) {
+
+                for (int i = 0; i < projectColumns.length - 1; i++) {
+                    selectQuery += projectColumns[i];
+
+                    if (projectAliases[i] != null && !projectAliases[i].isEmpty()) {
+                        selectQuery += " AS " + projectAliases[i];
+                    }
+
+                    selectQuery += ", ";
                 }
-                
-                selectQuery += ", ";
+                selectQuery += projectColumns[projectColumns.length - 1];
+
+                if (projectAliases[projectAliases.length - 1] != null
+                        && !projectAliases[projectAliases.length - 1].isEmpty()) {
+                    selectQuery += " AS " + projectAliases[projectAliases.length - 1];
+                }
+
+            } else {
+                selectQuery += "*";
             }
-            selectQuery += projectColumns[projectColumns.length - 1];
-            
-            if (projectAliases[projectAliases.length - 1] != null &&
-                    !projectAliases[projectAliases.length - 1].isEmpty()) {
-                selectQuery += " AS " + projectAliases[projectAliases.length - 1];
-            }
-            
-        } else {
-            selectQuery += "*";
-        }
-        
-        selectQuery += " FROM " + tableName;
-        
-        //WHERE clauses...
+
+            selectQuery += " FROM " + tableName;
+
+            //WHERE clauses...
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 selectQuery += " WHERE ";
                 List<String> attrs = new ArrayList<>(attrWhere.keySet());
 
                 for (int i = 0; i < attrs.size() - 1; i++) {
-                    String key = attrs.get(i).toLowerCase();
+                    String key = attrs.get(i);
+                    String[] divide = key.split(" ");
+                    String column = divide[0];
+                    String operator;
 
-                    selectQuery += key + " ";
-
-                    if (!key.contains("=") && !key.contains("<")
-                            && !key.contains(">") && !key.endsWith("like")) {
-                        selectQuery += "= ";
+                    if (divide.length > 1) {
+                        operator = divide[1].toUpperCase();
+                    } else {
+                        operator = "";
                     }
 
-                    selectQuery += "? AND ";
+                    selectQuery += column + " ";
+
+                    if (operator.isEmpty()) {
+                        selectQuery += "= ";
+                    } else {
+                        selectQuery += operator + " ";
+                    }
+
+                    //Llamar a otro metodo si contiene IN
+                    if (operator.equals("IN")) {
+                        Object values = attrWhere.get(key);
+                        if (values == null || !(values instanceof DataTable)
+                                || ((DataTable) values).isEmpty()) {
+                            return null;
+                        }
+
+                        selectQuery += getIn((DataTable) values);
+                    } else {
+                        selectQuery += "?";
+                    }
+
+                    selectQuery += " AND ";
                 }
                 //Last one
-                String key = attrs.get(attrs.size() - 1).toLowerCase();
+                String key = attrs.get(attrs.size() - 1);
+                String[] divide = key.split(" ");
+                String column = divide[0];
+                String operator;
 
-                selectQuery += key + " ";
-
-                if (!key.contains("=") && !key.contains("<")
-                        && !key.contains(">") && !key.endsWith("like")) {
-                    selectQuery += "= ";
+                if (divide.length > 1) {
+                    operator = divide[1].toUpperCase();
+                } else {
+                    operator = "";
                 }
 
-                selectQuery += "?";
+                selectQuery += column + " ";
+
+                if (operator.isEmpty()) {
+                    selectQuery += "= ";
+                } else {
+                    selectQuery += operator + " ";
+                }
+
+                //Llamar a otro metodo si contiene IN
+                if (operator.equals("IN")) {
+                    Object values = attrWhere.get(key);
+                    if (values == null || !(values instanceof DataTable)
+                            || ((DataTable) values).isEmpty()) {
+                        return null;
+                    }
+                    selectQuery += getIn((DataTable)values);
+                } else {
+                    selectQuery += "?";
+                }
             }
 
-        System.out.println(selectQuery);
+            selectQuery += " ORDER BY " + orderColumn;
+
+            System.out.println(selectQuery);
 
             conexion = ConnectionManager.conectar();
 
@@ -357,9 +401,11 @@ public class BaseDAO {
             //WHERE
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 int paramNumber = 0;
-                
+
                 for (String key : attrWhere.keySet()) {
-                    ps.setObject(paramNumber + 1, attrWhere.get(key));
+                    if (!key.endsWith("IN")) {
+                        ps.setObject(paramNumber + 1, attrWhere.get(key));
+                    }
                     paramNumber++;
                 }
             }
@@ -367,7 +413,7 @@ public class BaseDAO {
             rs = ps.executeQuery();
 
             dt.populate(rs);
-            
+
             //ConnectionManager.commit();
         } catch (SQLException ex) {
             //ConnectionManager.rollback();
@@ -381,19 +427,28 @@ public class BaseDAO {
         }
         return dt;
     }
-    
-    public static void main(String[] args) {
-        Map<String, Object> attrWhere = new HashMap<>();
-        
-        attrWhere.put("id >", 4);
-        //attrWhere.put("tipo_evento_id", 3);
-        
-        
-        DataTable dt = new BaseDAO().get("plantel",
-                new String[]{"MAX(id)"}, new String[]{"id"}, null);
-        
-        if(dt != null) {
-            System.out.println(dt);
+
+    private String getIn(DataTable values) {
+        String query = "( ";
+
+        //Poner toda la informacion
+        for (int i = 0; i < values.getRowCount() - 1; i++) {
+            if (values.getColumnClass(0) == String.class) {
+                query += "'" + values.getValueAt(i, 0) + "', ";
+            } else {
+                query += values.getValueAt(i, 0) + ", ";
+            }
         }
+
+        int last = values.getRowCount() - 1;
+        if (values.getColumnClass(0) == String.class) {
+            query += "'" + values.getValueAt(last, 0) + "'";
+        } else {
+            query += values.getValueAt(last, 0);
+        }
+
+        query += " )";
+
+        return query;
     }
 }

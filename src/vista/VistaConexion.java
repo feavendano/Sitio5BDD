@@ -158,6 +158,8 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel3.setText("IP:");
 
+        s1IP.setText("192.168.1.77");
+
         jLabel4.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel4.setText("Puerto:");
 
@@ -174,20 +176,24 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel6.setText("IP:");
 
+        s2IP.setText("192.168.1.77");
+
         jLabel7.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel7.setText("Puerto:");
 
-        s2Puerto.setText("11973");
+        s2Puerto.setText("11974");
 
         jLabel24.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel24.setText("Interface:");
 
         s2Int.setText("Sitio2Capacisoft");
 
+        s3IP.setText("192.168.1.77");
+
         jLabel8.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel8.setText("Puerto:");
 
-        s3Puerto.setText("11973");
+        s3Puerto.setText("11975");
 
         jLabel25.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel25.setText("Interface:");
@@ -200,10 +206,12 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel10.setText("IP:");
 
+        s4IP.setText("192.168.1.77");
+
         jLabel14.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel14.setText("Puerto:");
 
-        s4Puerto.setText("11973");
+        s4Puerto.setText("11976");
 
         jLabel27.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel27.setText("Interface:");
@@ -216,10 +224,22 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel16.setText("IP:");
 
+        s5IP.setText("192.168.173.226");
+        s5IP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                s5IPActionPerformed(evt);
+            }
+        });
+
         jLabel17.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel17.setText("Puerto:");
 
         s5Puerto.setText("11973");
+        s5Puerto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                s5PuertoActionPerformed(evt);
+            }
+        });
 
         jLabel28.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel28.setText("Interface:");
@@ -232,10 +252,12 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel19.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel19.setText("IP:");
 
+        s6IP.setText("192.168.1.77");
+
         jLabel20.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel20.setText("Puerto:");
 
-        s6Puerto.setText("11973");
+        s6Puerto.setText("11978");
 
         jLabel29.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel29.setText("Interface:");
@@ -248,10 +270,12 @@ public class VistaConexion extends javax.swing.JFrame {
         jLabel22.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel22.setText("IP:");
 
+        s7IP.setText("192.168.1.77");
+
         jLabel30.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel30.setText("Puerto:");
 
-        s7Puerto.setText("11973");
+        s7Puerto.setText("11979");
 
         jLabel31.setFont(new java.awt.Font("Source Sans Pro", 1, 15)); // NOI18N
         jLabel31.setText("Interface:");
@@ -765,6 +789,14 @@ public class VistaConexion extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_enviarConexionesSitio
+
+    private void s5IPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_s5IPActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_s5IPActionPerformed
+
+    private void s5PuertoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_s5PuertoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_s5PuertoActionPerformed
 
     /**
      * @param args the command line arguments
