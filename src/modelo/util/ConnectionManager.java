@@ -5,14 +5,13 @@
  */
 package modelo.util;
 
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,8 +22,8 @@ public class ConnectionManager {
     private static final ThreadLocal<Connection> conexion = new ThreadLocal<>();
     private static final String user = "root";
     private static final String pass = "";
-    private static final String url = "jdbc:mysql://localhost:3306/capacisoftfrag";
-    private static final String driver = "com.mysql.jdbc.Driver";
+    private static final String url = "jdbc:postgresql://localhost:5432/capacisoftfrag";
+    private static final String driver = "org.postgresql.Driver";
 
     public static Connection conectar() {
         Connection con = conexion.get();

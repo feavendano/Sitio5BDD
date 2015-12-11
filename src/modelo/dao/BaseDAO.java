@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +27,6 @@ public class BaseDAO {
     public DataTable add(String tableName, DataTable data, boolean savePKs) {
         PreparedStatement ps = null;
         Connection conexion;
-        boolean ok = true;
         String insertQuery = "INSERT INTO " + tableName + "( ";
         String valuesSection = "VALUES ( ";
 
@@ -106,19 +104,19 @@ public class BaseDAO {
                 data.rewind();
             }
 
+            System.out.println("Id 1: " + data.getValueAt(0, 0));
+            
             //ConnectionManager.commit();
         } catch (SQLException ex) {
             ConnectionManager.rollback();
             ConnectionManager.cerrar();
-            ok = false;
+            data = null;
             Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, null, ex);
 
         } finally {
             ConnectionManager.cerrar(ps);
             //ConnectionManager.cerrarTodo(ps, null);
         }
-
-        System.out.println("Id 1: " + data.getValueAt(0, 0));
 
         return data;
     }
@@ -175,11 +173,11 @@ public class BaseDAO {
             conexion = ConnectionManager.conectar();
 
             ps = conexion.prepareStatement(updateQuery);
-
+            
             //Cargar datos...
             //Reiniciar por si las dudas
             data.rewind();
-
+            
             data.next();
 
             //SET
@@ -221,8 +219,8 @@ public class BaseDAO {
         String deleteQuery = "DELETE FROM " + tableName;
 
         try {
-            //Crear query
-            //WHERE clauses...
+        //Crear query
+        //WHERE clauses...
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 deleteQuery += " WHERE ";
                 List<String> attrs = new ArrayList<>(attrWhere.keySet());
@@ -252,7 +250,7 @@ public class BaseDAO {
                 deleteQuery += "?";
             }
 
-            System.out.println(deleteQuery);
+        System.out.println(deleteQuery);
 
             conexion = ConnectionManager.conectar();
 
@@ -261,7 +259,7 @@ public class BaseDAO {
             //WHERE
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 int paramNumber = 0;
-
+                
                 for (String key : attrWhere.keySet()) {
                     ps.setObject(paramNumber + 1, attrWhere.get(key));
                     paramNumber++;
@@ -283,7 +281,7 @@ public class BaseDAO {
         }
         return ok;
     }
-
+    
     public DataTable get(String tableName, String[] projectColumns,
             String[] projectAliases, Map<String, ?> attrWhere) {
         PreparedStatement ps = null;
@@ -294,33 +292,33 @@ public class BaseDAO {
 
         try {
         //Crear query
-            //Project columns...
-            if (projectColumns != null && projectColumns.length > 0
-                    && projectAliases != null && projectAliases.length == projectColumns.length) {
-
-                for (int i = 0; i < projectColumns.length - 1; i++) {
-                    selectQuery += projectColumns[i];
-
-                    if (projectAliases[i] != null && !projectAliases[i].isEmpty()) {
-                        selectQuery += " AS " + projectAliases[i];
-                    }
-
-                    selectQuery += ", ";
+        //Project columns...
+        if (projectColumns != null && projectColumns.length > 0 &&
+                projectAliases != null && projectAliases.length == projectColumns.length) {
+            
+            for (int i = 0; i < projectColumns.length - 1; i++) {
+                selectQuery += projectColumns[i];
+                
+                if (projectAliases[i] != null && !projectAliases[i].isEmpty()) {
+                    selectQuery += " AS " + projectAliases[i];
                 }
-                selectQuery += projectColumns[projectColumns.length - 1];
-
-                if (projectAliases[projectAliases.length - 1] != null
-                        && !projectAliases[projectAliases.length - 1].isEmpty()) {
-                    selectQuery += " AS " + projectAliases[projectAliases.length - 1];
-                }
-
-            } else {
-                selectQuery += "*";
+                
+                selectQuery += ", ";
             }
-
-            selectQuery += " FROM " + tableName;
-
-            //WHERE clauses...
+            selectQuery += projectColumns[projectColumns.length - 1];
+            
+            if (projectAliases[projectAliases.length - 1] != null &&
+                    !projectAliases[projectAliases.length - 1].isEmpty()) {
+                selectQuery += " AS " + projectAliases[projectAliases.length - 1];
+            }
+            
+        } else {
+            selectQuery += "*";
+        }
+        
+        selectQuery += " FROM " + tableName;
+        
+        //WHERE clauses...
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 selectQuery += " WHERE ";
                 List<String> attrs = new ArrayList<>(attrWhere.keySet());
@@ -350,7 +348,7 @@ public class BaseDAO {
                 selectQuery += "?";
             }
 
-            System.out.println(selectQuery);
+        System.out.println(selectQuery);
 
             conexion = ConnectionManager.conectar();
 
@@ -359,7 +357,7 @@ public class BaseDAO {
             //WHERE
             if (attrWhere != null && !attrWhere.isEmpty()) {
                 int paramNumber = 0;
-
+                
                 for (String key : attrWhere.keySet()) {
                     ps.setObject(paramNumber + 1, attrWhere.get(key));
                     paramNumber++;
@@ -369,7 +367,7 @@ public class BaseDAO {
             rs = ps.executeQuery();
 
             dt.populate(rs);
-
+            
             //ConnectionManager.commit();
         } catch (SQLException ex) {
             //ConnectionManager.rollback();
@@ -383,5 +381,19 @@ public class BaseDAO {
         }
         return dt;
     }
-
+    
+    public static void main(String[] args) {
+        Map<String, Object> attrWhere = new HashMap<>();
+        
+        attrWhere.put("id >", 4);
+        //attrWhere.put("tipo_evento_id", 3);
+        
+        
+        DataTable dt = new BaseDAO().get("plantel",
+                new String[]{"MAX(id)"}, new String[]{"id"}, null);
+        
+        if(dt != null) {
+            System.out.println(dt);
+        }
+    }
 }

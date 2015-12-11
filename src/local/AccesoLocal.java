@@ -10,18 +10,30 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import modelo.dao.BaseDAO;
 import modelo.util.ConnectionManager;
+import modelo.dao.EmpleadoDAO;
 import modelo.dto.DataTable;
-import remote.Sitio5Int;
+import remote.Sitio7Int;
+import remote.util.InterfaceManager;
 
 /**
  *
  * @author jdosornio
  */
-public class AccesoLocal extends UnicastRemoteObject implements Sitio5Int {
+public class AccesoLocal extends UnicastRemoteObject implements Sitio7Int {
 
     
     public AccesoLocal() throws RemoteException {
         
+    }
+
+    @Override
+    public DataTable getEmpleado(String numeroEmp) throws RemoteException {
+        return new EmpleadoDAO().get(numeroEmp);
+    }
+
+    @Override
+    public DataTable getEmpleadosByImplementacion(int idImplementacion) throws RemoteException {
+        return new EmpleadoDAO().getByImplementacion(idImplementacion);
     }
 
     @Override
@@ -60,6 +72,11 @@ public class AccesoLocal extends UnicastRemoteObject implements Sitio5Int {
     }
 
     @Override
+    public DataTable get(String tabla, String[] columnas, String[] aliases, Map<String, ?> attrWhere) throws RemoteException {
+        return new BaseDAO().get(tabla, columnas, aliases, attrWhere);
+    }
+
+    @Override
     public boolean commit() throws RemoteException {
         System.out.println("Commit!");
         boolean ok = ConnectionManager.commit();
@@ -88,14 +105,13 @@ public class AccesoLocal extends UnicastRemoteObject implements Sitio5Int {
     }
 
     @Override
-    public DataTable getImplementacionesByPlantel(int idPlantel) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setConexionesSitos(Map<InterfaceManager.Interfaces, Object[]> conexiones)
+            throws RemoteException {
+        
+        InterfaceManager.setIntefacesConexion(conexiones);
+        InterfaceManager.conexionRemota = true;
+        
+        System.out.println("Se obtuvieron " + InterfaceManager
+                .getInterfacesConexion().size() + " interfaces");
     }
-
-    @Override
-    public DataTable get(String tabla, String[] columnas, String[] aliases, Map<String, ?> attrWhere) throws RemoteException {
-        return new BaseDAO().get(tabla, columnas, aliases, attrWhere);
-    }
-
-    
 }
